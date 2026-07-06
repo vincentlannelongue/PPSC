@@ -13,8 +13,7 @@ int main(int argc, char* argv[]) {
     outfile << std::setprecision(std::numeric_limits<double>::max_digits10);
 
     for (int exp = 1; exp <= 24; exp++) {
-        double sum = partial_sum(1, pow(2, exp));
-        double pi_approx = sum_to_pi(sum);
+        double pi_approx = compute_pi(pow(2, exp));
         double error = fabs(pi_approx - pi);
 
         outfile << exp << " " << pi_approx << " " << error << "\n";
