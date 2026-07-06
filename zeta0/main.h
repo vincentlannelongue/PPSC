@@ -3,7 +3,7 @@
 
 
 double term(int i) {
-    return 1.0 / (i * i);
+    return 1.0 / (double(i) * double(i));
 }
 
 
