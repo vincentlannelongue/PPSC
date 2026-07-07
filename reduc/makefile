@@ -1,5 +1,5 @@
 comp:
-	mpic++ main_reduc.cpp -o main
+	mpic++ main.cpp -o main
 
 run:
 	mpirun -n 4 ./main 10
