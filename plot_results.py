@@ -30,8 +30,8 @@ def method_0():
     plt.close()
 
 
-def method_1_error(method):
-    path = f"{method}1/results.txt"
+def method_error(method, num=1):
+    path = f"{method}{num}/results.txt"
 
     columns = ["procs", "n", "pi_approx", "error", "time"]
     df = pd.read_csv(path, names=columns, sep=" ")
@@ -47,12 +47,12 @@ def method_1_error(method):
 
     plt.title(f"{method} - Error")
     plt.legend(loc="upper right")
-    plt.savefig(os.path.join(RESULTS_PATH, f"{method}_1_error.svg"))
+    plt.savefig(os.path.join(RESULTS_PATH, f"{method}_{num}_error.svg"))
     plt.close()
 
 
-def method_1_time(method):
-    path = f"{method}1/results.txt"
+def method_time(method, num=1):
+    path = f"{method}{num}/results.txt"
 
     columns = ["procs", "n", "pi_approx", "error", "time"]
     df = pd.read_csv(path, names=columns, sep=" ")
@@ -68,7 +68,7 @@ def method_1_time(method):
     plt.title(f"{method} - Time")
 
     plt.legend(loc="upper right")
-    plt.savefig(os.path.join(RESULTS_PATH, f"{method}_1_time.svg"))
+    plt.savefig(os.path.join(RESULTS_PATH, f"{method}_{num}_time.svg"))
     plt.close()
 
 
@@ -105,8 +105,12 @@ def reduc():
 if __name__ == "__main__":
     os.makedirs(RESULTS_PATH, exist_ok=True)
     method_0()
-    method_1_error("zeta")
-    method_1_error("mach")
-    method_1_time("zeta")
-    method_1_time("mach")
+    method_error("zeta")
+    method_error("mach")
+    method_time("zeta")
+    method_time("mach")
     reduc()
+    method_error("zeta", num=2)
+    method_error("mach", num=2)
+    method_time("zeta", num=2)
+    method_time("mach", num=2)
