@@ -14,6 +14,23 @@ bool is_power_of_two(int x) {
     return x > 0 && (x & (x - 1)) == 0;
 }
 
+double recursive_doubling_sum(double local_value, int rank, int size, MPI_Comm comm) {
+    double accumulated = local_value;
+
+    for (int step = 1; step < size; step *= 2) {
+        int partner = rank ^ step;
+
+        double received(0.0);
+        MPI_Sendrecv(&accumulated, 1, MPI_DOUBLE, partner, 0,
+                     &received,    1, MPI_DOUBLE, partner, 0,
+                     comm, MPI_STATUS_IGNORE);
+
+        accumulated += received;
+    }
+
+    return accumulated;
+}
+
 int main(int argc, char* argv[])
 {
     MPI_Init(&argc, &argv);
@@ -43,14 +60,21 @@ int main(int argc, char* argv[])
     int end_index = (rank == size - 1) ? n : start_index + chunk_size - 1;
 
     double local_sum = partial_sum(start_index, end_index);
-    double global_sum(0.0);
 
+    // ONE VERSION Only --------
+    // Reduction version
+    double global_sum(0.0);
     MPI_Allreduce(&local_sum,
                   &global_sum,
                   1,
                   MPI_DOUBLE,
                   MPI_SUM,
                   MPI_COMM_WORLD);
+
+    // Doubling sum version
+    double global_sum = recursive_doubling_sum(local_sum, rank, size, MPI_COMM_WORLD);
+
+    // ------------------------
 
     double end_time = MPI_Wtime();
     double computation_time = end_time - start_time;
@@ -65,7 +89,7 @@ int main(int argc, char* argv[])
         std::cout << "Time: " << computation_time << std::endl;
 
         std::ofstream outfile;
-        outfile.open ("results.txt", std::ios_base::app);
+        outfile.open ("results_doubling.txt", std::ios_base::app);
         outfile << std::setprecision(std::numeric_limits<double>::max_digits10);
     
         outfile << size << " " << n << " " << pi_approx << " " << error << " "
