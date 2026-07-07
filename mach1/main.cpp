@@ -42,11 +42,22 @@ int main(int argc, char* argv[])
     int start_index = rank * chunk_size + 1;
     int end_index = (rank == size - 1) ? n : start_index + chunk_size - 1;
 
-    double local_sum = partial_sum(start_index, end_index);
-    double global_sum(0.0);
+    double local_sum_1 = partial_sum(start_index, end_index, (1.0/5.0));
+    double local_sum_2 = partial_sum(start_index, end_index, (1.0/239.0));
 
-    MPI_Reduce(&local_sum,
-               &global_sum,
+    double global_sum_1(0.0);
+    double global_sum_2(0.0);
+
+    MPI_Reduce(&local_sum_1,
+               &global_sum_1,
+               1,
+               MPI_DOUBLE,
+               MPI_SUM,
+               0,
+               MPI_COMM_WORLD);
+
+    MPI_Reduce(&local_sum_2,
+               &global_sum_2,
                1,
                MPI_DOUBLE,
                MPI_SUM,
@@ -57,7 +68,8 @@ int main(int argc, char* argv[])
     double computation_time = end_time - start_time;
 
     if (rank == 0) {
-        double pi_approx = sum_to_pi(global_sum);
+        double pi_approx = 16*global_sum_1 - 4*global_sum_2;
+
         std::cout << pi_approx << std::endl;
         double pi(4.0*atan(1.0));
         double error = fabs(pi_approx - pi);

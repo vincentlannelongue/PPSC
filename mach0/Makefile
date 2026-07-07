@@ -3,8 +3,8 @@ comp:
 	g++ utest.cpp -o utest.o
 	g++ vtest.cpp -o vtest.o
 
-main:
-	./main.o 10
+run:
+	./main.o 2
 
 utest:
 	./utest.o

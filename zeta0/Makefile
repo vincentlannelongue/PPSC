@@ -3,7 +3,7 @@ comp:
 	g++ utest.cpp -o utest.o
 	g++ vtest.cpp -o vtest.o
 
-main:
+run:
 	./main.o 10
 
 utest:
